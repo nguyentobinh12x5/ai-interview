@@ -1,7 +1,7 @@
 "use client";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/ui/app-sidebar";
-import { SessionProvider, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -10,8 +10,8 @@ function Auth({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
-    if (status === "loading") return; // Do nothing while loading
-    if (!session) router.push("/login"); // Redirect if no session
+    if (status === "loading") return;
+    if (!session) router.push("/login");
   }, [session, status, router]);
 
   if (status === "loading" || !session) {
@@ -27,16 +27,14 @@ export default function FeaturesLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <SessionProvider>
-      <Auth>
-        <SidebarProvider>
-          <AppSidebar />
-          <main>
-            <SidebarTrigger />
-            {children}
-          </main>
-        </SidebarProvider>
-      </Auth>
-    </SessionProvider>
+    <Auth>
+      <SidebarProvider>
+        <AppSidebar />
+        <main>
+          <SidebarTrigger />
+          {children}
+        </main>
+      </SidebarProvider>
+    </Auth>
   );
 }
