@@ -29,11 +29,13 @@ export default function FeaturesLayout({
   return (
     <Auth>
       <SidebarProvider>
-        <AppSidebar />
-        <main>
-          <SidebarTrigger />
-          {children}
-        </main>
+        <div className="flex h-screen w-screen">
+          <AppSidebar />
+          <main className="flex-1">
+            <SidebarTrigger />
+            {children}
+          </main>
+        </div>
       </SidebarProvider>
     </Auth>
   );

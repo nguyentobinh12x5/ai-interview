@@ -71,28 +71,63 @@ const Page = () => {
   };
 
   return (
-    <div className="mx-auto p-4">
-      <div className="flex space-x-4">
-        <Button id="start" onClick={startTranscription}>
-          Start transcription
-        </Button>
-        <Button id="stop" onClick={stopTranscription}>
-          Stop transcription
-        </Button>
-        <Button id="clear" onClick={clearTranscription}>
-          Clear transcription
-        </Button>
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-4 mx-auto p-4 h-full">
+      <div className="bg-gray-100 p-4 flex flex-col space-y-4">
+        <div>
+          <div className="flex justify-between items-center">
+            <h1 className="text-2xl font-bold">Live Interview</h1>
+            <div className="space-x-2">
+              <Button
+                id="start"
+                onClick={startTranscription}
+                className="rounded-full"
+              >
+                Select
+              </Button>
+              <Button
+                id="stop"
+                onClick={stopTranscription}
+                variant={"outline"}
+                className="rounded-full"
+              >
+                Live
+              </Button>
+              <Button
+                id="clear"
+                onClick={clearTranscription}
+                className="rounded-full"
+              >
+                Delete
+              </Button>
+            </div>
+          </div>
+          <div className="mt-4">
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              muted
+              className="w-full border border-gray-500 bg-black"
+            ></video>
+          </div>
+        </div>
+        <div className="bg-white p-4 flex-1">
+          <h2 className="text-base font-bold">
+            Transcript from your interviewer
+          </h2>
+          <p id="transcript">{transcript}</p>
+        </div>
       </div>
-      <div className="mt-4">
-        <video
-          ref={videoRef}
-          autoPlay
-          playsInline
-          muted
-          className="w-[50%] border border-gray-500"
-        ></video>
+      <div className="bg-gray-100 p-4">
+        <h2 className="text-base font-bold">Interview with AI</h2>
+        <Button className="rounded-full bg-green-200 text-green-600 mt-2">
+          Ready
+        </Button>
+        <div className="mt-4">
+          AI is currently listening to your interview. Please wait for the
+          answer.
+        </div>
       </div>
-      <p id="transcript">{transcript}</p>
     </div>
   );
 };
