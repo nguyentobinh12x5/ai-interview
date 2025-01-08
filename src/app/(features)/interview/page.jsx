@@ -29,7 +29,7 @@ const Page = () => {
         recorder = new MediaRecorder(mixed, { mimeType: "audio/webm" });
 
         socket = new WebSocket(
-          "wss://api.deepgram.com/v1/listen?model=general-enhanced",
+          "wss://api.deepgram.com/v1/listen?model=nova-2&language=vi",
           ["token", apiKey]
         );
 
