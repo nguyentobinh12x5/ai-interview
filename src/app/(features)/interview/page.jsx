@@ -55,7 +55,6 @@ const Page = () => {
         }
       });
   };
-
   const stopTranscription = () => {
     if (recorder) {
       recorder.stop();
@@ -63,9 +62,13 @@ const Page = () => {
     if (socket) {
       socket.close();
     }
+    if (videoRef.current && videoRef.current.srcObject) {
+      const tracks = videoRef.current.srcObject.getTracks();
+      tracks.forEach((track) => track.stop());
+      videoRef.current.srcObject = null;
+    }
     alert("Transcription ended");
   };
-
   const clearTranscription = () => {
     setTranscript("");
   };
