@@ -32,7 +32,7 @@ const page = () => {
     formData.append("file", file);
 
     try {
-      const response = await axios.post("/api/upload", formData, {
+      const response = await axios.post("/api/questions", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -58,7 +58,7 @@ const page = () => {
       <h1>Upload PDF</h1>
       <Input type="file" accept=".pdf" onChange={handleFileChange} />
       <Button onClick={handleUpload} disabled={!file || uploading}>
-        Upload
+        Add Questions
       </Button>
       {error && <p style={{ color: "red" }}>{error}</p>}
       {success && <p style={{ color: "green" }}>{success}</p>}

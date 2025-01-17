@@ -26,7 +26,7 @@ export async function POST(req: Request) {
               type: "text",
               text: `You are an AI Assistant who is an expert about Interview. 
               Start Context: You are interviewing for a software engineering role at a top tech company base on my CV ${content} End Context. 
-              Question: Generate 10 Interview questions based on the context.`,
+              Question: Generate 10 Interview questions based on the context in Json Format.`,
             },
           ],
         },
