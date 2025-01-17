@@ -3,13 +3,10 @@ import { useRef, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 let apiKey = process.env.NEXT_PUBLIC_DEEPGRAM_API_KEY;
 let socket;
-let userSocket;
 let recorder;
-let userRecorder;
 
 const Page = () => {
-  const [transcript, setTranscript] = useState("");
-  const [userStranscript, setUserTranscript] = useState("");
+  const [transcript, setTranscript] = useState([]);
   const [isSharing, setIsSharing] = useState(false);
   const [selectedText, setSelectedText] = useState("");
   const [aiResponse, setAiResponse] = useState("");
@@ -44,16 +41,10 @@ const Page = () => {
         });
 
         const audioContext = new AudioContext();
-        const mixed = mix(audioContext, [screenStream]);
-        const user = mix(audioContext, [micStream]);
+        const mixed = mix(audioContext, [screenStream, micStream]);
         recorder = new MediaRecorder(mixed, { mimeType: "audio/webm" });
-        userRecorder = new MediaRecorder(user, { mimeType: "audio/webm" });
 
         socket = new WebSocket(
-          "wss://api.deepgram.com/v1/listen?model=nova-2&language=vi",
-          ["token", apiKey]
-        );
-        userSocket = new WebSocket(
           "wss://api.deepgram.com/v1/listen?model=nova-2&language=vi",
           ["token", apiKey]
         );
@@ -64,29 +55,22 @@ const Page = () => {
         });
 
         socket.onopen = () => {
-          recorder.start(250);
+          recorder.start(500);
         };
 
         socket.onmessage = (msg) => {
           const { transcript } = JSON.parse(msg.data).channel.alternatives[0];
           if (transcript) {
-            setTranscript((prev) => prev + " " + transcript);
-          }
-        };
-
-        userRecorder.addEventListener("dataavailable", (evt) => {
-          if (evt.data.size > 0 && userSocket.readyState == 1)
-            userSocket.send(evt.data);
-        });
-
-        userSocket.onopen = () => {
-          userRecorder.start(250);
-        };
-
-        userSocket.onmessage = (msg) => {
-          const { transcript } = JSON.parse(msg.data).channel.alternatives[0];
-          if (transcript) {
-            setUserTranscript((prev) => prev + " " + transcript);
+            setTranscript((prev) => {
+              const lastEntry = prev[prev.length - 1];
+              const currentTime = formatTime(time);
+              if (lastEntry && lastEntry.time === currentTime) {
+                lastEntry.text += " " + transcript;
+                return [...prev.slice(0, -1), lastEntry];
+              } else {
+                return [...prev, { time: currentTime, text: transcript }];
+              }
+            });
           }
         };
 
@@ -95,7 +79,7 @@ const Page = () => {
           videoRef.current.play();
         }
         setIsSharing(true);
-        setTime(0); // Reset timer
+        setTime(0);
       });
   };
 
@@ -103,14 +87,8 @@ const Page = () => {
     if (recorder) {
       recorder.stop();
     }
-    if (userRecorder) {
-      userRecorder.stop();
-    }
     if (socket) {
       socket.close();
-    }
-    if (userSocket) {
-      userSocket.close();
     }
     if (videoRef.current) {
       videoRef.current.srcObject.getTracks().forEach((track) => track.stop());
@@ -120,7 +98,7 @@ const Page = () => {
   };
 
   const clearTranscription = () => {
-    setTranscript("");
+    setTranscript([]);
   };
 
   const handleTextSelection = () => {
@@ -176,7 +154,7 @@ const Page = () => {
               </Button>
             </div>
           </div>
-          <div className="mt-4">
+          <div className="mt-4 h-[300px]">
             <video
               ref={videoRef}
               autoPlay
@@ -186,15 +164,15 @@ const Page = () => {
             ></video>
           </div>
         </div>
-        <div className="bg-white p-4 flex-1">
-          <h2 className="text-base font-bold">
-            Transcript from your interviewer
-          </h2>
-          <p id="transcript" onMouseUp={handleTextSelection}>
-            {transcript}
-          </p>
-          <h2 className="text-base font-bold">Transcript from user</h2>
-          <p>{userStranscript}</p>
+        <div className="bg-white p-4 flex-1 overflow-y-scroll">
+          <h2 className="text-base font-bold">Transcript</h2>
+          <div id="transcript" onMouseUp={handleTextSelection}>
+            {transcript.map((entry, index) => (
+              <div key={index}>
+                <span className="font-bold">{entry.time}</span>: {entry.text}
+              </div>
+            ))}
+          </div>
           {selectedText && (
             <Button onClick={askAi} className="rounded-full mt-2">
               Ask AI
