@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
-const Header = () => {
-  const router = useRouter();
+import { currentUser } from "@clerk/nextjs/server";
+const Header = async () => {
+  const user = await currentUser();
   return (
     <header className="bg-white">
       <div className="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
@@ -45,7 +45,13 @@ const Header = () => {
             </nav>
 
             <div className="hidden md:relative md:block">
-              <Button onClick={() => router.push("/sign-in")}>Sign In</Button>
+              {user ? (
+                <div>Hello {user?.firstName}</div>
+              ) : (
+                <Button>
+                  <a href="sign-in">Sign in</a>
+                </Button>
+              )}
             </div>
 
             <div className="block md:hidden">
