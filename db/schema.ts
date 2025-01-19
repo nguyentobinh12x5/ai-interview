@@ -16,6 +16,8 @@ export const Resume = pgTable("resume", {
   name: varchar("name").notNull(),
   jsonResume: text("jsonResume").notNull(),
   userEmail: varchar("userEmail"),
+  createdAt: varchar("createdAt"),
+  updatedAt: varchar("updatedAt"),
 });
 export const InterviewSet = pgTable("interviewSet", {
   id: serial("id").primaryKey(),

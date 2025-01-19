@@ -113,7 +113,7 @@ const Page = () => {
     data = data.replace(/(<li>.*<\/li>)/g, "<ul>$1</ul>");
     data = data.replace(/<\/ul><ul>/g, "");
     data = data.replace(/<li>(.*?)<\/li><br>/g, "<li>$1</li>");
-    return "<p>" + data + "</p>";
+    return data;
   };
 
   const askAi = async () => {
@@ -138,8 +138,8 @@ const Page = () => {
   };
 
   return (
-    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-4 mx-auto h-full">
-      <div className="bg-gray-100 p-4 flex flex-col space-y-4">
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-4 h-full">
+      <div className="flex flex-col space-y-4">
         <div>
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-bold">Live Interview</h1>
@@ -174,7 +174,7 @@ const Page = () => {
               </Button>
             </div>
           </div>
-          <div className="mt-4 h-[300px]">
+          <div className="mt-4">
             <video
               ref={videoRef}
               autoPlay
@@ -201,7 +201,7 @@ const Page = () => {
           )}
         </div>
       </div>
-      <div className="bg-gray-100 p-4">
+      <div>
         <h2 className="text-base font-bold">Interview with AI</h2>
         <Button className="rounded-full bg-green-200 text-green-600 mt-2">
           Ready

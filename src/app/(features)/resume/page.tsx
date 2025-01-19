@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,13 +12,31 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus } from "lucide-react";
+import { Plus, LoaderCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-const page = () => {
+const Page = () => {
   const { toast } = useToast();
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [resumes, setResumes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("/api/resume");
+      setResumes(response.data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
@@ -27,10 +45,11 @@ const page = () => {
     } else {
       toast({
         variant: "destructive",
-        description: "EPlease upload a valid PDF file.",
+        description: "Please upload a valid PDF file.",
       });
     }
   };
+
   const handleSubmit = async () => {
     if (!file) return;
     setUploading(true);
@@ -43,6 +62,8 @@ const page = () => {
         },
       });
       toast({ description: "File uploaded successfully" });
+      setIsDialogOpen(false);
+      fetchData();
     } catch (err) {
       toast({
         variant: "destructive",
@@ -52,6 +73,19 @@ const page = () => {
       setUploading(false);
     }
   };
+  const handleDelete = async (id: number) => {
+    try {
+      await axios.delete(`/api/resume?id=${id}`);
+      toast({ description: "Resume deleted successfully" });
+      fetchData(); // Reload the data
+    } catch (err) {
+      toast({
+        variant: "destructive",
+        description: "Error deleting resume. Please try again",
+      });
+    }
+  };
+
   return (
     <>
       <h1>User Resume</h1>
@@ -59,9 +93,9 @@ const page = () => {
         Upload your resume or CV to get started with your interview preparation
       </h3>
       <div>
-        <Dialog>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button>
+            <Button onClick={() => setIsDialogOpen(true)}>
               <Plus />
               Add
             </Button>
@@ -96,46 +130,52 @@ const page = () => {
         </Dialog>
       </div>
       <div>
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
-            <thead>
-              <tr>
-                <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900 text-start">
-                  Name
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900 text-start">
-                  Date of Birth
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900 text-start">
-                  Job Description
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900 text-start">
-                  Action
-                </th>
-              </tr>
-            </thead>
-
-            <tbody className="divide-y divide-gray-200">
-              <tr>
-                <td className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                  John Doe
-                </td>
-                <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                  24/05/1995
-                </td>
-                <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                  Web Developer
-                </td>
-                <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                  <Button variant="outline">Edit</Button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        {loading ? (
+          <div className="flex justify-center items-center">
+            <LoaderCircle className="animate-spin" />
+          </div>
+        ) : resumes.length === 0 ? (
+          <p>No resumes found. Please upload your resume.</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
+              <thead>
+                <tr>
+                  <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900 text-start">
+                    File Name
+                  </th>
+                  <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900 text-start">
+                    Update Date
+                  </th>
+                  <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900 text-start">
+                    Action
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {resumes.map((resume: any) => (
+                  <tr key={resume.id}>
+                    <td className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                      {resume.name}
+                    </td>
+                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                      {resume.updatedAt}
+                    </td>
+                    <td className="whitespace-nowrap px-4 py-2 text-gray-700 flex gap-2">
+                      <Button variant="outline">Edit</Button>
+                      <Button onClick={() => handleDelete(resume.id)}>
+                        Delete
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </>
   );
 };
 
-export default page;
+export default Page;
