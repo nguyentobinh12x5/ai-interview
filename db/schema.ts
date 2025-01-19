@@ -1,24 +1,27 @@
 import { integer, pgTable, serial, text, varchar } from "drizzle-orm/pg-core";
 
-export const MockInterview = pgTable("mockInterview", {
+export const QuestionAnswer = pgTable("questionAnswer", {
   id: serial("id").primaryKey(),
-  jsonMockResp: text("jsonMockResp").notNull(),
-  jobPosition: varchar("jobPosition").notNull(),
-  jobDesc: varchar("jobDesc").notNull(),
-  jobExperience: varchar("jobExperience").notNull(),
-  createdBy: varchar("createdBy").notNull(),
-  createdAt: varchar("createdAt"),
-  mockId: varchar("mockId").notNull(),
-});
-
-export const UserAnswer = pgTable("userAnswer", {
-  id: serial("id").primaryKey(),
-  mockIdRef: varchar("mockId").notNull(),
-  question: varchar("question").notNull(),
-  correctAns: text("correctAns"),
-  userAns: text("userAns"),
-  feedback: text("feedback"),
-  rating: varchar("rating"),
+  question: text("question").notNull(),
+  answer: text("answer").notNull(),
   userEmail: varchar("userEmail"),
   createdAt: varchar("createdAt"),
+  updatedAt: varchar("updatedAt"),
+  interviewSetId: integer("interviewSetId")
+    .notNull()
+    .references(() => InterviewSet.id, { onDelete: "cascade" }),
+});
+export const Resume = pgTable("resume", {
+  id: serial("id").primaryKey(),
+  name: varchar("name").notNull(),
+  jsonResume: text("jsonResume").notNull(),
+  userEmail: varchar("userEmail"),
+});
+export const InterviewSet = pgTable("interviewSet", {
+  id: serial("id").primaryKey(),
+  createdAt: varchar("createdAt"),
+  updatedAt: varchar("updatedAt"),
+  ResumeId: integer("resumeId")
+    .notNull()
+    .references(() => Resume.id, { onDelete: "cascade" }),
 });

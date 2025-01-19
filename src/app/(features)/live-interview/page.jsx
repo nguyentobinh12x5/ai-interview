@@ -1,12 +1,14 @@
 "use client";
 import { useRef, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import axios from "axios";
 let apiKey = process.env.NEXT_PUBLIC_DEEPGRAM_API_KEY;
 let socket;
 let recorder;
 
 const Page = () => {
   const [transcript, setTranscript] = useState([]);
+  const [error, setError] = useState("");
   const [isSharing, setIsSharing] = useState(false);
   const [selectedText, setSelectedText] = useState("");
   const [aiResponse, setAiResponse] = useState("");
@@ -105,9 +107,27 @@ const Page = () => {
     const selectedText = window.getSelection().toString();
     setSelectedText(selectedText);
   };
+  const processString = (data) => {
+    data = data.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+    data = data.replace(/^\* (.*)$/gm, "<li>$1</li>");
+    data = data.replace(/(<li>.*<\/li>)/g, "<ul>$1</ul>");
+    data = data.replace(/<\/ul><ul>/g, "");
+    data = data.replace(/<li>(.*?)<\/li><br>/g, "<li>$1</li>");
+    return "<p>" + data + "</p>";
+  };
 
-  const askAi = () => {
-    setAiResponse(selectedText);
+  const askAi = async () => {
+    try {
+      const response = await axios.post("/api/live-interview", selectedText, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const text = processString(response.data.text);
+      setAiResponse(text);
+    } catch (err) {
+      setError("Error when connecting with server");
+    }
     setSelectedText("");
   };
 
@@ -118,7 +138,7 @@ const Page = () => {
   };
 
   return (
-    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-4 mx-auto p-4 h-full">
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-4 mx-auto h-full">
       <div className="bg-gray-100 p-4 flex flex-col space-y-4">
         <div>
           <div className="flex justify-between items-center">
@@ -167,11 +187,12 @@ const Page = () => {
         <div className="bg-white p-4 flex-1 overflow-y-scroll">
           <h2 className="text-base font-bold">Transcript</h2>
           <div id="transcript" onMouseUp={handleTextSelection}>
-            {transcript.map((entry, index) => (
+            {/* {transcript.map((entry, index) => (
               <div key={index}>
                 <span className="font-bold">{entry.time}</span>: {entry.text}
               </div>
-            ))}
+            ))} */}
+            <div>What is SQL?</div>
           </div>
           {selectedText && (
             <Button onClick={askAi} className="rounded-full mt-2">
@@ -192,7 +213,10 @@ const Page = () => {
         {aiResponse && (
           <div className="mt-4 bg-white p-4">
             <h3 className="text-base font-bold">AI Response:</h3>
-            <p>{aiResponse}</p>
+            <div
+              id="sqlContent"
+              dangerouslySetInnerHTML={{ __html: aiResponse }}
+            />
           </div>
         )}
       </div>
@@ -208,5 +232,4 @@ function mix(audioContext, streams) {
   });
   return dest.stream;
 }
-
 export default Page;

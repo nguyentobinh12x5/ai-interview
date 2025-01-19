@@ -28,7 +28,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "src/app/(features)/mock-interview/page.jsx",
-    "src/app/(features)/interview/page.tsx"
+    "src/app/(features)/live-interview/page.tsx"
   ],
   "ts-node": {
     "compilerOptions": {

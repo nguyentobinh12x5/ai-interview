@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -13,70 +12,63 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Plus } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const page = () => {
+  const { toast } = useToast();
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
-  const [questions, setQuestions] = useState<string[]>([]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
     if (selectedFile && selectedFile.type === "application/pdf") {
       setFile(selectedFile);
-      setError(null);
     } else {
-      setError("Please upload a valid PDF file.");
+      toast({
+        variant: "destructive",
+        description: "EPlease upload a valid PDF file.",
+      });
     }
   };
-
   const handleSubmit = async () => {
     if (!file) return;
-
     setUploading(true);
-    setError(null);
-    setSuccess(null);
-
     const formData = new FormData();
     formData.append("file", file);
-
     try {
-      const response = await axios.post("/api/questions", formData, {
+      await axios.post("/api/resume", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-      setSuccess("File uploaded successfully!");
-      const questionsArray = response.data.text
-        .replace("```json", "")
-        .replace("```", "");
-      setQuestions(questionsArray);
+      toast({ description: "File uploaded successfully" });
     } catch (err) {
-      setError("Error uploading file. Please try again.");
+      toast({
+        variant: "destructive",
+        description: "Error uploading file. Please try again",
+      });
     } finally {
       setUploading(false);
     }
   };
   return (
     <>
-      <h1>Interview Preparation Hub</h1>
+      <h1>User Resume</h1>
       <h3 className="font-normal">
-        Link your resume and create a role, generate interview questions, and
-        prepare in advance.
+        Upload your resume or CV to get started with your interview preparation
       </h3>
       <div>
         <Dialog>
           <DialogTrigger asChild>
-            <Button>Prepare</Button>
+            <Button>
+              <Plus />
+              Add
+            </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle>Tell us more about your job interview</DialogTitle>
-              <DialogDescription>
-                Add Detail about your job interview. Click save when you're
-                done.
-              </DialogDescription>
+              <DialogTitle>Upload your Resume or CV</DialogTitle>
             </DialogHeader>
             <div className="flex items-start space-y-4 flex-col">
               <div className="grid flex-1 gap-2">
@@ -87,16 +79,6 @@ const page = () => {
                   type="file"
                   accept=".pdf"
                   onChange={handleFileChange}
-                  className="col-span-3"
-                />
-              </div>
-              <div className="grid flex-1 gap-2">
-                <Label htmlFor="name" className="text-right">
-                  Job Description
-                </Label>
-                <Input
-                  id="name"
-                  value="Job description"
                   className="col-span-3"
                 />
               </div>
