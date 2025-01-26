@@ -35,7 +35,7 @@ const Header = async () => {
 
                 <li>
                   <Link
-                    href={"/live-interview"}
+                    href={"/prepare-hub"}
                     className="text-gray-500 transition hover:text-gray-500/75"
                   >
                     Dashboard

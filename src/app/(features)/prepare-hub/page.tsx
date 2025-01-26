@@ -16,7 +16,6 @@ import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
   SelectLabel,
   SelectTrigger,
@@ -24,9 +23,11 @@ import {
 } from "@/components/ui/select";
 import { LoaderCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 
 const page = () => {
   const { toast } = useToast();
+  const router = useRouter();
   const [selectedResume, setSelectedResume] = useState<string>("");
   const [interviewSet, setInterviewSet] = useState<any>(null);
   const [uploading, setUploading] = useState(false);
@@ -198,7 +199,14 @@ const page = () => {
                       {interview.createdAt}
                     </td>
                     <td className="whitespace-nowrap px-4 py-2 text-gray-700 flex gap-2">
-                      <Button variant="outline">Edit</Button>
+                      <Button
+                        variant="outline"
+                        onClick={() =>
+                          router.push(`/prepare-hub/${interview.id}`)
+                        }
+                      >
+                        Edit
+                      </Button>
                       <Button>Delete</Button>
                     </td>
                   </tr>
