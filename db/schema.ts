@@ -21,9 +21,11 @@ export const Resume = pgTable("resume", {
 });
 export const InterviewSet = pgTable("interviewSet", {
   id: serial("id").primaryKey(),
+  userEmail: varchar("userEmail"),
   createdAt: varchar("createdAt"),
   updatedAt: varchar("updatedAt"),
-  ResumeId: integer("resumeId")
+  resumeName: varchar("resumeName"),
+  resumeId: integer("resumeId")
     .notNull()
     .references(() => Resume.id, { onDelete: "cascade" }),
 });

@@ -145,7 +145,7 @@ const Page = () => {
                     File Name
                   </th>
                   <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900 text-start">
-                    Update Date
+                    Create Date
                   </th>
                   <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900 text-start">
                     Action
@@ -159,7 +159,7 @@ const Page = () => {
                       {resume.name}
                     </td>
                     <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                      {resume.updatedAt}
+                      {resume.createdAt}
                     </td>
                     <td className="whitespace-nowrap px-4 py-2 text-gray-700 flex gap-2">
                       <Button variant="outline">Edit</Button>

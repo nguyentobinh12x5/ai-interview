@@ -34,6 +34,7 @@ export async function POST(req: Request) {
         name: file.name,
         jsonResume: JSON.stringify(content),
         userEmail: user.primaryEmailAddress?.emailAddress,
+        createdAt: new Date().toISOString(),
       })
       .returning({ id: Resume.id });
     return new Response(
@@ -49,7 +50,7 @@ export async function DELETE(req: Request) {
   const id = searchParams.get("id");
   console.log(id);
   if (!id) {
-    return new Response("Invalpid pid", { status: 400 });
+    return new Response("Invalid Id", { status: 400 });
   }
   await db.delete(Resume).where(eq(Resume.id, parseInt(id)));
   return new Response("Resume deleted successfully");
