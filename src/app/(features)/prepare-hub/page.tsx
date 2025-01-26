@@ -20,6 +20,7 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
+  SelectGroup,
 } from "@/components/ui/select";
 import { LoaderCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -123,19 +124,21 @@ const page = () => {
             </DialogHeader>
             <div className="flex items-start space-y-4 flex-col">
               <div className="grid flex-1 gap-2">
-                <SelectLabel className="text-right">Resume</SelectLabel>
-                <Select onValueChange={handleResumeChange}>
-                  <SelectTrigger className="col-span-3">
-                    <SelectValue placeholder="Select your Resumes" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {resumes.map((resume: any) => (
-                      <SelectItem key={resume.id} value={resume.id}>
-                        {resume.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <SelectGroup>
+                  <SelectLabel>Resume</SelectLabel>
+                  <Select onValueChange={handleResumeChange}>
+                    <SelectTrigger className="col-span-3">
+                      <SelectValue placeholder="Select your Resumes" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {resumes.map((resume: any) => (
+                        <SelectItem key={resume.id} value={resume.id}>
+                          {resume.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </SelectGroup>
               </div>
               <div className="grid flex-1 gap-2">
                 <Label htmlFor="name" className="text-right">
