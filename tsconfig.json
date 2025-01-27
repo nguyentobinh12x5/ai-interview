@@ -22,14 +22,7 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts",
-    "src/app/(features)/mock-interview/page.jsx",
-    "src/app/(features)/live-interview/page.tsx"
-  ],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "ts-node": {
     "compilerOptions": {
       "module": "CommonJS"
