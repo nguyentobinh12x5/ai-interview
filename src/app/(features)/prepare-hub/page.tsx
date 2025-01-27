@@ -175,6 +175,11 @@ const page = () => {
           <div className="flex justify-center items-center">
             <LoaderCircle className="animate-spin" />
           </div>
+        ) : interviewSet.length === 0 ? (
+          <p>
+            Not found any questions. Please upload your resume and
+            jobdescription.
+          </p>
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
