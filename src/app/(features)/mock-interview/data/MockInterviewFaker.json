@@ -1,0 +1,27 @@
+{
+  "interviewer": {
+    "image": "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e",
+    "responses": [
+      {
+        "id": 1,
+        "text": "Hello! I'm Sarah, and I'll be conducting your mock interview today. Could you tell me a bit about yourself?",
+        "audio": "mock-response-1.mp3"
+      },
+      {
+        "id": 2,
+        "text": "That's interesting! Can you tell me about a challenging project you've worked on?",
+        "audio": "mock-response-2.mp3"
+      },
+      {
+        "id": 3,
+        "text": "How do you handle conflicts in a team environment?",
+        "audio": "mock-response-3.mp3"
+      },
+      {
+        "id": 4,
+        "text": "Where do you see yourself in five years?",
+        "audio": "mock-response-4.mp3"
+      }
+    ]
+  }
+}
