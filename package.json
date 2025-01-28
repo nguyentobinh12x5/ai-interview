@@ -17,8 +17,6 @@
     "@clerk/nextjs": "^6.9.10",
     "@datastax/astra-db-ts": "^1.5.0",
     "@deepgram/sdk": "^3.9.0",
-    "@genkit-ai/dev-local-vectorstore": "^0.9.12",
-    "@genkit-ai/firebase": "^0.9.12",
     "@genkit-ai/googleai": "^0.9.12",
     "@genkit-ai/vertexai": "^0.9.12",
     "@google-cloud/speech": "^6.7.0",
@@ -39,7 +37,6 @@
     "clsx": "^2.1.1",
     "cross-fetch": "^4.1.0",
     "drizzle-orm": "^0.31.4",
-    "firebase": "^11.1.0",
     "genkit": "^0.9.12",
     "langchain": "^0.3.11",
     "llm-chunk": "^0.0.1",
@@ -50,12 +47,9 @@
     "puppeteer": "^24.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "socket.io": "^4.8.1",
-    "socket.io-client": "^4.8.1",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
-    "ts-node": "^10.9.2",
-    "ws": "^8.18.0"
+    "ts-node": "^10.9.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
