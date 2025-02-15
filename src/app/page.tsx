@@ -1,10 +1,19 @@
-import { Button } from "@/components/ui/button";
+import Header from "@/components/ui/header";
+import Step from "@/components/ui/step";
+import Banner from "@/components/ui/banner";
+import Video from "@/components/ui/video";
+import Footer from "@/components/ui/footer";
 
 export default function Home() {
   return (
-    <div>
-      <h1 className="text-3xl font-bold">Welcome to Next.js!</h1>
-      <Button>Click me</Button>
-    </div>
+    <>
+      <Header />
+      <main>
+        <Banner />
+        <Video />
+        <Step />
+      </main>
+      <Footer />
+    </>
   );
 }
