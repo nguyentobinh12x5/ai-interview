@@ -28,13 +28,13 @@ const Header = () => {
           <div className="md:flex md:items-center md:gap-8">
             <nav aria-label="Global" className="md:block">
               <ul className="flex items-center gap-6">
-                <li className="bg-indigo-600 text-white hover:bg-indigo-500 py-2 px-4 rounded-md">
-                  <SignedIn>
+                <SignedIn>
+                  <li className="bg-indigo-600 text-white hover:bg-indigo-500 py-2 px-4 rounded-md">
                     <Link href={"/resume"} className="transitio">
                       Dashboard
                     </Link>
-                  </SignedIn>
-                </li>
+                  </li>
+                </SignedIn>
               </ul>
             </nav>
             <div className="flex gap-4">
