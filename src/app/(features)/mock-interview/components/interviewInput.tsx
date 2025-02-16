@@ -1,6 +1,7 @@
 import React from "react";
-import { Mic, Send, Loader2 } from "lucide-react";
+import { Mic, Send, Loader2, Play, Square } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAudioRecorder } from "../hooks/useAudioRecorder";
 
 interface InterviewInputProps {
   isListening: boolean;
@@ -38,6 +39,8 @@ const InterviewInput: React.FC<InterviewInputProps> = ({
   onSubmit,
   error,
 }) => {
+  const { isRecording, startRecording, stopRecording, error: recordingError } = useAudioRecorder();
+
   const handleAction = () => {
     if (isListening) {
       onSubmit();
@@ -49,14 +52,14 @@ const InterviewInput: React.FC<InterviewInputProps> = ({
   return (
     <div className="flex flex-col items-center">
       <AnimatePresence>
-        {error && (
+        {(error || recordingError) && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
             className="text-red-500 text-sm mb-2"
           >
-            {error}
+            {error || recordingError}
           </motion.div>
         )}
         {isListening && (
@@ -71,42 +74,61 @@ const InterviewInput: React.FC<InterviewInputProps> = ({
         )}
       </AnimatePresence>
 
-      <motion.button
-        onClick={handleAction}
-        disabled={isProcessing}
-        className={`
-          p-4 rounded-full transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed
-          ${error ? 'bg-red-100 hover:bg-red-200' : ''}
-          ${isListening 
-            ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg scale-110' 
-            : 'bg-gray-100 hover:bg-gray-200 text-gray-600'
+      <div className="flex items-center gap-4">
+        <motion.button
+          onClick={!isRecording ? startRecording : stopRecording}
+          className={`
+            p-3 rounded-full transition-all duration-200
+            ${isRecording 
+              ? 'bg-red-500 hover:bg-red-600 text-white' 
+              : 'bg-green-500 hover:bg-green-600 text-white'}
+          `}
+          whileTap={{ scale: 0.95 }}
+          aria-label={isRecording ? "Stop recording" : "Start recording"}
+        >
+          {isRecording ? (
+            <Square className="h-5 w-5" />
+          ) : (
+            <Play className="h-5 w-5" />
+          )}
+        </motion.button>
+
+        <motion.button
+          onClick={handleAction}
+          disabled={isProcessing}
+          className={`
+            p-4 rounded-full transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed
+            ${error ? 'bg-red-100 hover:bg-red-200' : ''}
+            ${isListening 
+              ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg scale-110' 
+              : 'bg-gray-100 hover:bg-gray-200 text-gray-600'}
+            ${isProcessing ? 'cursor-wait' : 'cursor-pointer'}
+          `}
+          whileTap={{ scale: 0.95 }}
+          title={
+            isSupported 
+              ? isListening 
+                ? "Send response" 
+                : "Start recording" 
+              : "Voice input not supported"
           }
-          ${isProcessing ? 'cursor-wait' : 'cursor-pointer'}
-        `}
-        whileTap={{ scale: 0.95 }}
-        title={
-          isSupported 
-            ? isListening 
-              ? "Send response" 
-              : "Start recording" 
-            : "Voice input not supported"
-        }
-        aria-label={
-          isProcessing 
-            ? "Processing" 
-            : isListening 
-              ? "Send response" 
-              : "Start recording"
-        }
-      >
-        {isProcessing ? (
-          <Loader2 className="h-6 w-6 animate-spin" />
-        ) : isListening ? (
-          <Send className="h-6 w-6" />
-        ) : (
-          <Mic className="h-6 w-6" />
-        )}
-      </motion.button>
+          aria-label={
+            isProcessing 
+              ? "Processing" 
+              : isListening 
+                ? "Send response" 
+                : "Start recording"
+          }
+        >
+          {isProcessing ? (
+            <Loader2 className="h-6 w-6 animate-spin" />
+          ) : isListening ? (
+            <Send className="h-6 w-6" />
+          ) : (
+            <Mic className="h-6 w-6" />
+          )}
+        </motion.button>
+      </div>
     </div>
   );
 };
