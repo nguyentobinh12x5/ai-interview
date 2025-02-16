@@ -179,7 +179,7 @@ const MockInterviewModal: React.FC<MockInterviewModalProps> = ({
                 <div className="grid grid-cols-2 gap-4">
                   {voices.map((voice) => (
                     <div
-                      key={voice.id}
+                      key={voice.name}
                       onClick={() => setSelectedVoice(voice)}
                       className={cn(
                         "rounded-xl cursor-pointer transition-all p-6 flex flex-col items-center relative",
