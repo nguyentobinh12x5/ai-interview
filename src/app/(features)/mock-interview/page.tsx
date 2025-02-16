@@ -24,6 +24,34 @@ interface Voice {
   avatarUrl: string;
 }
 
+const TRANSITION_PHRASES = [
+  "Thank you for your insight. Let's move on to our next question.",
+  "I appreciate your detailed response. Now, could you tell me...",
+  "Thanks for sharing that. I'd like to ask you another question.",
+  "Your answer is much appreciated. Now, let's discuss...",
+  "Thank you for that explanation. May we explore another aspect?",
+  "I value your perspective. Let's transition to another topic.",
+  "That was very helpful, thank you. Next, I'd like to ask...",
+  "Thanks for your input. Let's proceed to the next question.",
+  "I appreciate your thoughts. Now, can you elaborate on...",
+  "Thank you for sharing your experience. Moving forward, could you...",
+  "Great answer. Now, let's shift focus to another area.",
+  "Thanks for that insight. Can we discuss another point?",
+  "I appreciate your explanation. Let's now consider a different perspective.",
+  "Thank you for your response. Next, I'd like to delve into...",
+  "Your response was very informative. Let's move on to the next topic.",
+  "I appreciate your answer. Now, can you tell me more about...",
+  "Thanks for clarifying that. Let's now explore another question.",
+  "Thank you for sharing your thoughts. Next, could you expand on...",
+  "I value your input. Let's transition to discussing another aspect.",
+  "Great, thanks for your answer. Now, let's take a look at another question."
+];
+
+const getRandomTransitionPhrase = () => {
+  const randomIndex = Math.floor(Math.random() * TRANSITION_PHRASES.length);
+  return TRANSITION_PHRASES[randomIndex];
+};
+
 const MockInterviewPage = () => {
   const [inputText, setInputText] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
@@ -114,25 +142,27 @@ const MockInterviewPage = () => {
     }
   }, [isListening, isSupported, isProcessing, startListening, stopListening]);
 
-  const handleSubmit = useCallback(async () => {
-    if (!inputText.trim() || isProcessing) return;
+  const handleSubmit = useCallback(async (transcription: string) => {
+    if (!transcription || isProcessing) return;
 
     try {
-      if (isListening) {
-        await stopListening();
-      }
-
       setIsProcessing(true);
-      addMessage(inputText, true);
-      setInputText("");
-
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
+      
+      // Get the next question before processing
       const nextResponse = interviewQuestions[currentResponse + 1];
+      
       if (nextResponse) {
-        addMessage(nextResponse.question, false);
+        // Small delay before AI response for natural conversation flow
+        await new Promise((resolve) => setTimeout(resolve, 800));
+        
+        // Combine transition phrase with the next question
+        const transitionPhrase = getRandomTransitionPhrase();
+        const fullResponse = `${transitionPhrase} ${nextResponse.question}`;
+        
+        // Add and speak the next question with transition
+        addMessage(fullResponse, false);
         setCurrentResponse((prev) => prev + 1);
-        await speechSynthesis.current.speak(nextResponse.question);
+        await speechSynthesis.current.speak(fullResponse);
       }
     } catch (error) {
       console.error("Submit error:", error);
@@ -140,16 +170,7 @@ const MockInterviewPage = () => {
     } finally {
       setIsProcessing(false);
     }
-  }, [
-    inputText,
-    isProcessing,
-    currentResponse,
-    interviewQuestions,
-    isListening,
-    stopListening,
-    addMessage,
-    setCurrentResponse,
-  ]);
+  }, [currentResponse, interviewQuestions, addMessage, setCurrentResponse, isProcessing]);
 
   // Add cleanup effect
   useEffect(() => {
@@ -310,10 +331,7 @@ const MockInterviewPage = () => {
                 </div>
                 <div className="flex justify-center w-full">
                   <InterviewInput
-                    isListening={isListening}
                     isProcessing={isProcessing}
-                    isSupported={isSupported}
-                    onToggleRecording={handleToggleRecording}
                     onSubmit={handleSubmit}
                     error={micError}
                   />

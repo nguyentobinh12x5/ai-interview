@@ -1,14 +1,11 @@
-import React from "react";
-import { Mic, Send, Loader2, Play, Square } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { Mic, Send, Loader2, Square } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAudioRecorder } from "../hooks/useAudioRecorder";
 
 interface InterviewInputProps {
-  isListening: boolean;
   isProcessing: boolean;
-  isSupported: boolean;
-  onToggleRecording: () => void;
-  onSubmit: () => void;
+  onSubmit: (transcription: string) => Promise<void>;
   error: string | null;
 }
 
@@ -32,20 +29,51 @@ const WaveformAnimation = () => (
 );
 
 const InterviewInput: React.FC<InterviewInputProps> = ({
-  isListening,
   isProcessing,
-  isSupported,
-  onToggleRecording,
   onSubmit,
   error,
 }) => {
-  const { isRecording, startRecording, stopRecording, error: recordingError } = useAudioRecorder();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { 
+    isRecording, 
+    startRecording, 
+    stopRecording, 
+    error: recordingError, 
+    transcription 
+  } = useAudioRecorder();
 
-  const handleAction = () => {
-    if (isListening) {
-      onSubmit();
+  useEffect(() => {
+    if (transcription && !isRecording) {
+      handleSubmission(transcription);
+    }
+  }, [transcription, isRecording]);
+
+  const handleSubmission = async (text: string) => {
+    if (!text || isSubmitting) return;
+    
+    setIsSubmitting(true);
+    try {
+      await onSubmit(text);
+    } catch (err) {
+      console.error("Error submitting transcription:", err);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleAction = async () => {
+    if (isRecording) {
+      try {
+        await stopRecording();
+      } catch (err) {
+        console.error("Error stopping recording:", err);
+      }
     } else {
-      onToggleRecording();
+      try {
+        await startRecording();
+      } catch (err) {
+        console.error("Error starting recording:", err);
+      }
     }
   };
 
@@ -62,7 +90,7 @@ const InterviewInput: React.FC<InterviewInputProps> = ({
             {error || recordingError}
           </motion.div>
         )}
-        {isListening && (
+        {isRecording && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -74,61 +102,27 @@ const InterviewInput: React.FC<InterviewInputProps> = ({
         )}
       </AnimatePresence>
 
-      <div className="flex items-center gap-4">
-        <motion.button
-          onClick={!isRecording ? startRecording : stopRecording}
-          className={`
-            p-3 rounded-full transition-all duration-200
-            ${isRecording 
-              ? 'bg-red-500 hover:bg-red-600 text-white' 
-              : 'bg-green-500 hover:bg-green-600 text-white'}
-          `}
-          whileTap={{ scale: 0.95 }}
-          aria-label={isRecording ? "Stop recording" : "Start recording"}
-        >
-          {isRecording ? (
-            <Square className="h-5 w-5" />
-          ) : (
-            <Play className="h-5 w-5" />
-          )}
-        </motion.button>
-
-        <motion.button
-          onClick={handleAction}
-          disabled={isProcessing}
-          className={`
-            p-4 rounded-full transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed
-            ${error ? 'bg-red-100 hover:bg-red-200' : ''}
-            ${isListening 
-              ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg scale-110' 
-              : 'bg-gray-100 hover:bg-gray-200 text-gray-600'}
-            ${isProcessing ? 'cursor-wait' : 'cursor-pointer'}
-          `}
-          whileTap={{ scale: 0.95 }}
-          title={
-            isSupported 
-              ? isListening 
-                ? "Send response" 
-                : "Start recording" 
-              : "Voice input not supported"
-          }
-          aria-label={
-            isProcessing 
-              ? "Processing" 
-              : isListening 
-                ? "Send response" 
-                : "Start recording"
-          }
-        >
-          {isProcessing ? (
-            <Loader2 className="h-6 w-6 animate-spin" />
-          ) : isListening ? (
-            <Send className="h-6 w-6" />
-          ) : (
-            <Mic className="h-6 w-6" />
-          )}
-        </motion.button>
-      </div>
+      <motion.button
+        onClick={handleAction}
+        disabled={isProcessing || isSubmitting}
+        className={`
+          p-4 rounded-full transition-all duration-200 
+          disabled:opacity-50 disabled:cursor-not-allowed
+          ${isRecording 
+            ? 'bg-red-500 hover:bg-red-600 text-white' 
+            : 'bg-indigo-600 hover:bg-indigo-700 text-white'}
+        `}
+        whileTap={{ scale: 0.95 }}
+        aria-label={isRecording ? "Stop recording" : "Start recording"}
+      >
+        {isProcessing || isSubmitting ? (
+          <Loader2 className="h-6 w-6 animate-spin" />
+        ) : isRecording ? (
+          <Square className="h-6 w-6" />
+        ) : (
+          <Mic className="h-6 w-6" />
+        )}
+      </motion.button>
     </div>
   );
 };
