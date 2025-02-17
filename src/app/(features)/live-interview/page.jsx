@@ -164,13 +164,11 @@ const Page = () => {
           <h2 className="text-base font-medium">
             Transcript from your interview
           </h2>
-          {transcript ?? (
-            <div id="transcript" onMouseUp={handleTextSelection}>
-              <div className="bg-gray-200 p-2 rounded-md">
-                <div>{transcript}</div>
-              </div>
+          <div id="transcript" onMouseUp={handleTextSelection}>
+            <div className="bg-gray-200 p-2 rounded-md">
+              <div>{transcript}</div>
             </div>
-          )}
+          </div>
           {selectedText && (
             <Button onClick={askAi} className="rounded-full mt-2">
               Ask AI
