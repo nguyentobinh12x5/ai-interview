@@ -65,7 +65,10 @@ const Page = () => {
         socket.onmessage = (msg) => {
           const { transcript } = JSON.parse(msg.data).channel.alternatives[0];
           if (transcript) {
-            setTranscript((prevTranscript) => [...prevTranscript, transcript]);
+            setTranscript((prevTranscript) => [
+              ...(prevTranscript + " "),
+              transcript,
+            ]);
           }
         };
 

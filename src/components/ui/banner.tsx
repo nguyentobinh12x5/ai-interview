@@ -1,5 +1,7 @@
 import Link from "next/link";
 import React from "react";
+import { Input } from "./input";
+import { Button } from "./button";
 
 const Banner = () => {
   return (
@@ -16,10 +18,13 @@ const Banner = () => {
 
           <p className="mt-4 sm:text-xl/relaxed">
             Boost your confidence, refine your answers, and land your dream job
-            with your AI Interview Copilot. Let practice today!
+            with your AI Interview Copilot. We are launching!
           </p>
-
-          <div className="mt-8 flex flex-wrap justify-center gap-4">
+          <div className="mt-8 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-center px-8">
+            <Input placeholder="Email Address" type="email" />
+            <Button>Notify Me</Button>
+          </div>
+          {/* <div className="mt-8 flex flex-wrap justify-center gap-4">
             <Link
               className="block w-full rounded-sm bg-indigo-600 px-12 py-3 text-sm font-medium text-white shadow-sm hover:bg-indigo-500 focus:ring-3 focus:outline-hidden sm:w-auto"
               href="/resume"
@@ -33,7 +38,7 @@ const Banner = () => {
             >
               Learn More
             </Link>
-          </div>
+          </div> */}
         </div>
       </div>
     </section>
