@@ -1,8 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['116.118.51.65']
-  }
-}
+    remotePatterns: [
+      {
+        protocol: "http",
+        hostname: "116.118.51.65",
+      },
+    ],
+  },
+};
 
-module.exports = nextConfig 
+module.exports = nextConfig;
