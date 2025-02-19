@@ -16,6 +16,7 @@ import mockData from "./data/MockInterviewFaker.json";
 import MockInterviewModal from './components/mockInterviewModal';
 import { cn } from "@/lib/utils";
 import WebcamStream from "./components/WebcamStream";
+import { useRouter } from "next/navigation";
 
 interface Voice {
   id: string;
@@ -83,6 +84,8 @@ const MockInterviewPage = () => {
 
   // Add new state for tracking mic errors
   const [micError, setMicError] = useState<string | null>(null);
+
+  const router = useRouter();
 
   useEffect(() => {
     const handleSpeechStart = () => {
@@ -222,8 +225,9 @@ const MockInterviewPage = () => {
     if (window.confirm('Are you sure you want to leave the interview?')) {
       handleEnd();
       setElapsedTime(0);
+      router.push('/assessment-report');
     }
-  }, [handleEnd]);
+  }, [handleEnd, router]);
 
   const handleCameraToggle = useCallback(() => {
     setIsCameraOn(prev => !prev);
@@ -308,7 +312,7 @@ const MockInterviewPage = () => {
               <div className="w-[25%]">
                 <div className="relative rounded-lg overflow-hidden bg-black h-[300px]">
                   <img
-                    src={mockData.interviewer.image}
+                    src={selectedVoice.avatarUrl}
                     alt="Interviewer"
                     className="absolute inset-0 w-full h-full object-cover"
                   />
