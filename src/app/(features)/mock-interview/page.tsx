@@ -151,21 +151,23 @@ const MockInterviewPage = () => {
     try {
       setIsProcessing(true);
       
-      // Get the next question before processing
       const nextResponse = interviewQuestions[currentResponse + 1];
       
       if (nextResponse) {
-        // Small delay before AI response for natural conversation flow
         await new Promise((resolve) => setTimeout(resolve, 800));
         
-        // Combine transition phrase with the next question
         const transitionPhrase = getRandomTransitionPhrase();
         const fullResponse = `${transitionPhrase} ${nextResponse.question}`;
         
-        // Add and speak the next question with transition
+        // First synthesize the audio
+        const audioData = await speechSynthesis.current.synthesizeAudio(fullResponse);
+        
+        // Then add the message and update state
         addMessage(fullResponse, false);
         setCurrentResponse((prev) => prev + 1);
-        await speechSynthesis.current.speak(fullResponse);
+        
+        // Finally play the synthesized audio
+        await speechSynthesis.current.speak(audioData);
       }
     } catch (error) {
       console.error("Submit error:", error);
@@ -248,8 +250,8 @@ const MockInterviewPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white">
-      <div>
+    <div className="h-screen bg-white flex flex-col overflow-hidden">
+      <div className="flex-1">
         {!isStarted ? (
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -269,7 +271,7 @@ const MockInterviewPage = () => {
             </Button>
           </motion.div>
         ) : (
-          <div className="flex-1 flex flex-col min-h-0">
+          <div className="h-full flex flex-col p-4">
             <div className="flex justify-between items-center mb-4">
               <div className="flex flex-col gap-1">
                 <h1 className="text-xl font-semibold text-gray-900">Mock interview</h1>
@@ -309,8 +311,8 @@ const MockInterviewPage = () => {
             </div>
 
             <div className="flex gap-4 flex-1 min-h-0">
-              <div className="w-[25%]">
-                <div className="relative rounded-lg overflow-hidden bg-black h-[300px]">
+              <div className="w-[25%] flex flex-col gap-4">
+                <div className="relative rounded-lg overflow-hidden bg-black aspect-[4/3]">
                   <img
                     src={selectedVoice.avatarUrl}
                     alt="Interviewer"
@@ -325,7 +327,7 @@ const MockInterviewPage = () => {
               </div>
 
               <div className="w-[75%] flex flex-col min-h-0">
-                <div className="flex-1 min-h-0 mb-4">
+                <div className="flex-1 min-h-0">
                   <InterviewTranscript
                     messages={messages.map((msg) => ({
                       ...msg,
@@ -333,7 +335,7 @@ const MockInterviewPage = () => {
                     }))}
                   />
                 </div>
-                <div className="flex justify-center w-full">
+                <div className="mt-auto">
                   <InterviewInput
                     isProcessing={isProcessing}
                     onSubmit={handleSubmit}
