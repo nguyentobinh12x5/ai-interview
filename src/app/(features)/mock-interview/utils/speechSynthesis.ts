@@ -21,7 +21,16 @@ class SpeechSynthesisManager {
     return this.instance;
   }
 
-  async speak(text: string): Promise<void> {
+  async synthesizeAudio(text: string): Promise<ArrayBuffer> {
+    try {
+      return await this.ttsService.synthesize(text);
+    } catch (error) {
+      console.error('Audio synthesis error:', error);
+      throw error;
+    }
+  }
+
+  async speak(input: string | ArrayBuffer): Promise<void> {
     if (!this.audioContext && typeof window !== 'undefined') {
       this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
     }
@@ -29,7 +38,13 @@ class SpeechSynthesisManager {
     try {
       this.stop();
       
-      const audioData = await this.ttsService.synthesize(text);
+      let audioData: ArrayBuffer;
+      if (typeof input === 'string') {
+        audioData = await this.ttsService.synthesize(input);
+      } else {
+        audioData = input;
+      }
+
       // Create a copy of the ArrayBuffer before decoding
       const audioDataCopy = audioData.slice(0);
       const audioBuffer = await this.audioContext!.decodeAudioData(audioDataCopy);
@@ -50,6 +65,7 @@ class SpeechSynthesisManager {
       console.error('Speech synthesis error:', error);
       this.isPlaying = false;
       this.ttsService.emit('speechEnd');
+      throw error;
     }
   }
 
