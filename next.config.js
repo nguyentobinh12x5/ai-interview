@@ -6,6 +6,10 @@ const nextConfig = {
         protocol: "http",
         hostname: "116.118.51.65",
       },
+      {
+        protocol: "https",
+        hostname: "img.beatinterview.com",
+      },
     ],
   },
 };

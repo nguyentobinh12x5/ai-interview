@@ -68,3 +68,15 @@ export const InterviewSetEmbeddings = pgTable(
     ),
   ]
 );
+
+export const WaitingList = pgTable("waitingList", {
+  id: serial("id").primaryKey(),
+  email: text("email").notNull(),
+  fullName: text("full_name").notNull(),
+  jobTitle: text("job_title").notNull(),
+  phoneNumber: text("phone_number").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at")
+    .notNull()
+    .$onUpdate(() => new Date()),
+});
