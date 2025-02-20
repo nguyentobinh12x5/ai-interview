@@ -1,9 +1,14 @@
+"use client";
+
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import { Input } from "./input";
 import { Button } from "./button";
+import WaitlistDialog from "./waitlistDialog";
 
 const Banner = () => {
+  const [isWaitlistOpen, setIsWaitlistOpen] = useState(false);
+
   return (
     <section>
       <div className="mx-auto max-w-screen-xl px-4 py-32 lg:flex lg:items-center lg:h-screen">
@@ -21,8 +26,13 @@ const Banner = () => {
             with your AI Interview Copilot. We are launching!
           </p>
           <div className="mt-8 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-center px-8">
-            <Input placeholder="Email Address" type="email" />
-            <Button>Notify Me</Button>
+            <Button 
+              size="lg"
+              onClick={() => setIsWaitlistOpen(true)}
+              className="w-full sm:w-auto"
+            >
+              Join Waitlist
+            </Button>
           </div>
           {/* <div className="mt-8 flex flex-wrap justify-center gap-4">
             <Link
@@ -41,6 +51,11 @@ const Banner = () => {
           </div> */}
         </div>
       </div>
+
+      <WaitlistDialog 
+        isOpen={isWaitlistOpen}
+        onClose={() => setIsWaitlistOpen(false)}
+      />
     </section>
   );
 };
