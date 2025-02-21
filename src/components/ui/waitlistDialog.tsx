@@ -1,11 +1,17 @@
 "use client";
 
 import React from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "./dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "./dialog";
 import { Button } from "./button";
 import { Input } from "./input";
 import { Label } from "./label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./select";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { UserPlus } from "lucide-react";
@@ -58,7 +64,7 @@ const WaitlistDialog: React.FC<WaitlistDialogProps> = ({ isOpen, onClose }) => {
       setTimeout(() => {
         setShowSuccess(true);
       }, 100);
-    
+
       setFormData({
         fullName: "",
         email: "",
@@ -87,10 +93,13 @@ const WaitlistDialog: React.FC<WaitlistDialogProps> = ({ isOpen, onClose }) => {
           <DialogHeader className="px-6 pt-6 pb-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/50 dark:to-indigo-950/50">
             <div className="flex items-center gap-2 mb-2">
               <UserPlus className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-              <DialogTitle className="text-xl font-semibold">Join Our Waitlist</DialogTitle>
+              <DialogTitle className="text-xl font-semibold">
+                Join Our Waitlist
+              </DialogTitle>
             </div>
             <DialogDescription className="text-muted-foreground">
-            Join the waitlist to be the first to experience our AI-powered interview prep and unlock exclusive offers.
+              Join the waitlist to be the first to experience our AI-powered
+              interview prep and unlock exclusive offers.
             </DialogDescription>
           </DialogHeader>
 
@@ -104,7 +113,9 @@ const WaitlistDialog: React.FC<WaitlistDialogProps> = ({ isOpen, onClose }) => {
                   id="fullName"
                   required
                   value={formData.fullName}
-                  onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, fullName: e.target.value })
+                  }
                   placeholder="John Doe"
                   className="transition-colors focus-visible:ring-2 focus-visible:ring-blue-500"
                   aria-label="Enter your full name"
@@ -118,7 +129,9 @@ const WaitlistDialog: React.FC<WaitlistDialogProps> = ({ isOpen, onClose }) => {
                   type="email"
                   required
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
                   placeholder="john@example.com"
                   className="transition-colors focus-visible:ring-2 focus-visible:ring-blue-500"
                   aria-label="Enter your email"
@@ -132,7 +145,9 @@ const WaitlistDialog: React.FC<WaitlistDialogProps> = ({ isOpen, onClose }) => {
                   type="tel"
                   required
                   value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, phone: e.target.value })
+                  }
                   placeholder="+84 (909) 111-222"
                   className="transition-colors focus-visible:ring-2 focus-visible:ring-blue-500"
                   aria-label="Enter your phone number"
@@ -145,7 +160,9 @@ const WaitlistDialog: React.FC<WaitlistDialogProps> = ({ isOpen, onClose }) => {
                   id="occupation"
                   required
                   value={formData.occupation}
-                  onChange={(e) => setFormData({ ...formData, occupation: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, occupation: e.target.value })
+                  }
                   placeholder="Software Engineer"
                   className="transition-colors focus-visible:ring-2 focus-visible:ring-blue-500"
                   aria-label="Enter your job title"
@@ -178,4 +195,4 @@ const WaitlistDialog: React.FC<WaitlistDialogProps> = ({ isOpen, onClose }) => {
   );
 };
 
-export default WaitlistDialog; 
+export default WaitlistDialog;

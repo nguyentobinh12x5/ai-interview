@@ -1,8 +1,6 @@
 "use client";
 
-import Link from "next/link";
 import React, { useState } from "react";
-import { Input } from "./input";
 import { Button } from "./button";
 import WaitlistDialog from "./waitlistDialog";
 
@@ -26,7 +24,7 @@ const Banner = () => {
             with your AI Interview Copilot. We are launching!
           </p>
           <div className="mt-8 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-center px-8">
-            <Button 
+            <Button
               size="lg"
               onClick={() => setIsWaitlistOpen(true)}
               className="w-full sm:w-auto"
@@ -52,7 +50,7 @@ const Banner = () => {
         </div>
       </div>
 
-      <WaitlistDialog 
+      <WaitlistDialog
         isOpen={isWaitlistOpen}
         onClose={() => setIsWaitlistOpen(false)}
       />
